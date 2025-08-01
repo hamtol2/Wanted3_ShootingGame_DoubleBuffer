@@ -12,8 +12,8 @@
 // 애니메이션 이펙트 프레임 구조체.
 struct EffectFrame
 {
-	EffectFrame(const char* frame, float playTime = 0.05f)
-		: playTime(playTime)
+	EffectFrame(const char* frame, float playTime = 0.05f, Color color = Color::Red)
+		: playTime(playTime), color(color)
 	{
 		// 문자열 설정.
 		size_t length = strlen(frame) + 1;
@@ -31,6 +31,9 @@ struct EffectFrame
 
 	// 재생 시간.
 	float playTime = 0.0f;
+
+	// 색상.
+	Color color = Color::White;
 };
 
 class EnemyDestroyEffect : public Actor

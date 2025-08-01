@@ -156,6 +156,17 @@ bool Actor::TestIntersect(const Actor* const other)
 	return position.y == other->position.y;
 }
 
+void Actor::ChangeImage(const char* newImage)
+{
+	// 기존 이미지 메모리 해제.
+	SafeDelete(image);
+
+	// 새로운 문자열 복사.
+	size_t length = strlen(newImage) + 1;
+	image = new char[length];
+	strcpy_s(image, length, newImage);
+}
+
 void Actor::Destroy()
 {
 	// 중복 삭제 방지 처리.

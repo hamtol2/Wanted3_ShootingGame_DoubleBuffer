@@ -3,11 +3,11 @@
 // 효과 재생에 사용할 문자열 시퀀스 (일종의 애니메이션 프레임).
 static const EffectFrame sequence[] =
 {
-	EffectFrame("  @  ", 0.08f),
-	EffectFrame(" @@  ", 0.08f),
-	EffectFrame(" @@@ ", 0.08f),
-	EffectFrame("@@@@ ", 0.08f),
-	EffectFrame("  +1 ", 1.0f)
+	EffectFrame("  @  ", 0.08f, Color::Red),
+	EffectFrame(" @@  ", 0.08f, Color::Blue),
+	EffectFrame(" @@@ ", 0.08f, Color::Green),
+	EffectFrame("@@@@ ", 0.08f, Color::Red),
+	EffectFrame("  +1 ", 0.5f, Color::Green)
 };
 
 EnemyDestroyEffect::EnemyDestroyEffect(const Vector2& position)
@@ -18,6 +18,9 @@ EnemyDestroyEffect::EnemyDestroyEffect(const Vector2& position)
 
 	// 다음 애니메이션까지 대기할 시간.
 	timer.SetTargetTime(sequence[0].playTime);
+
+	// 색상 설정.
+	color = sequence[0].color;
 }
 
 void EnemyDestroyEffect::Tick(float deltaTime)
@@ -50,7 +53,8 @@ void EnemyDestroyEffect::Tick(float deltaTime)
 	SafeDelete(image);
 
 	// 애니메이션 프레임에 사용할 문자열을 액터에 복사.
-	size_t length = strlen(sequence[currentSequenceIndex].frame) + 1;
-	image = new char[length];
-	strcpy_s(image, length, sequence[currentSequenceIndex].frame);
-}
+	ChangeImage(sequence[currentSequenceIndex].frame);
+	
+	// 색상 설정.
+	color = sequence[currentSequenceIndex].color;
+};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor/Actor.h"
+#include "Utils/Timer.h"
 
 /*
 * 기능
@@ -11,9 +12,18 @@
 */
 class Player : public Actor
 {
+	// 발사 모드.
+	// 단발/연사.
+	enum class FireMode
+	{
+		None = -1,
+		OneShot,
+		Repeat
+	};
+
 	RTTI_DECLARATIONS(Player, Actor)
 public:
-	Player();
+	Player(float fireInterval = 0.15f, FireMode fireMode = FireMode::OneShot);
 
 	virtual void Tick(float deltaTime) override;
 
@@ -22,6 +32,12 @@ private:
 	void FireInterval(float deltaTime);
 
 private:
+	// 발사 모드.
+	FireMode fireMode = FireMode::None;
+
 	// 연사 간격 (단위: 초).
 	float fireInterval = 0.15f;
+
+	// 발사 간격 제어 타이머.
+	Timer timer;
 };

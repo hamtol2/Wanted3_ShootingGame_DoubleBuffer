@@ -51,6 +51,9 @@ public:
 	// 충돌 확인 요청 함수 (간단한 AABB 로직).
 	bool TestIntersect(const Actor* const other);
 
+	// 액터의 이미지 값 변경 함수.
+	void ChangeImage(const char* newImage);
+
 	// 객체 삭제 함수.
 	void Destroy();
 
