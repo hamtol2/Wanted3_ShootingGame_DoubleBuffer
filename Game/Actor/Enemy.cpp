@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Level/Level.h"
 #include "Actor/EnemyBullet.h"
+#include "Actor/EnemyDestroyEffect.h"
 //using namespace Utils;
 
 Enemy::Enemy(const char* image, int yPosition)
@@ -71,4 +72,11 @@ void Enemy::Tick(float deltaTime)
 	// 타이머 변수 정리.
 	timer.Reset();
 	timer.SetTargetTime(Utils::RandomFloat(1.0f, 3.0f));
+}
+
+void Enemy::OnDestroy()
+{
+	super::OnDestroy();
+
+	owner->AddActor(new EnemyDestroyEffect(position));
 }

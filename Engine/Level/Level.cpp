@@ -80,6 +80,22 @@ void Level::Tick(float deltaTime)
 			continue;
 		}
 
+		// 수명 주기 확인 및 처리.
+		if (actor->autoDestroy)
+		{
+			// 수명 주기 감소 처리.
+			actor->lifetime -= deltaTime;
+
+			// 수명이 다했는지 확인.
+			if (actor->lifetime <= 0.0f)
+			{
+				// 액터 제거 요청하고, 다음 액터 처리.
+				actor->lifetime = 0.0f;
+				actor->Destroy();
+				continue;
+			}
+		}
+
 		actor->Tick(deltaTime);
 	}
 }

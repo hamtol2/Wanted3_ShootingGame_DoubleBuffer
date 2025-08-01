@@ -28,9 +28,6 @@ GameLevel::GameLevel()
 	playerWidth = player->Width();
 	AddActor(player);
 
-	// 테스트 용도.
-	//AddActor(new Enemy());
-
 	// 타이머 설정.
 	enemySpawnTimer.SetTargetTime(Utils::RandomFloat(2.0f, 3.0f));
 }
@@ -71,7 +68,7 @@ void GameLevel::SpawnEnemies(float deltaTime)
 
 	// 타이머 정리.
 	enemySpawnTimer.Reset();
-	enemySpawnTimer.SetTargetTime(Utils::RandomFloat(2.0f, 3.0f));
+	enemySpawnTimer.SetTargetTime(Utils::RandomFloat(0.5f, 1.5f));
 
 	// 적 생성 로직.
 	// 배열 길이 구하기.

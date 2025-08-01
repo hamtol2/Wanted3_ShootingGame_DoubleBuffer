@@ -26,6 +26,8 @@ public:
 
 	virtual void Tick(float deltaTime) override;
 
+	virtual void OnDestroy() override;
+
 private:
 
 	// 이동 방향.

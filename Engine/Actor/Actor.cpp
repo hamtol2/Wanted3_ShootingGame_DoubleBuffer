@@ -169,6 +169,29 @@ void Actor::Destroy()
 
 	// 레벨에 삭제 요청.
 	owner->DestroyActor(this);
+
+	// 죽음 요청됐다고 알림.
+	OnDestroy();
+}
+
+void Actor::OnDestroy()
+{
+
+}
+
+void Actor::SetLifetime(float newLifetime)
+{
+	// 입력값 확인.
+	if (newLifetime <= 0.0f)
+	{
+		return;
+	}
+
+	// 수명 주기 설정.
+	lifetime = newLifetime;
+
+	// 자동 제거 옵션 활성화.
+	autoDestroy = true;
 }
 
 void Actor::QuitGame()

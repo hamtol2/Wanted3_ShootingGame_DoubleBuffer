@@ -54,6 +54,12 @@ public:
 	// 객체 삭제 함수.
 	void Destroy();
 
+	// 객체가 삭제되기 직전에 호출되는 함수.
+	virtual void OnDestroy();
+
+	// 수명 주기 설정 함수.
+	void SetLifetime(float newLifetime);
+
 	// 게임 종료 요청 함수.
 	void QuitGame();
 
@@ -82,6 +88,12 @@ protected:
 
 	// 삭제 요청됐는지 알려주는 변수.
 	bool isExpired = false;
+
+	// 수명 주기 (단위: 초).
+	float lifetime = 0.0f;
+
+	// 이 플래그를 true로 설정하면 수명 주기를 사용해 자동 제거.
+	bool autoDestroy = false;
 
 	// 소유 레벨(오너십).
 	Level* owner = nullptr;
