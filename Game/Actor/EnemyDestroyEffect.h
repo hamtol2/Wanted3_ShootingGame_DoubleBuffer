@@ -8,6 +8,31 @@
 * EnemyDestroyEffect 클래스.
 * Enemy가 죽었을 때 죽음 효과를 재생할 때 생성하는 액터.
 */
+
+// 애니메이션 이펙트 프레임 구조체.
+struct EffectFrame
+{
+	EffectFrame(const char* frame, float playTime = 0.05f)
+		: playTime(playTime)
+	{
+		// 문자열 설정.
+		size_t length = strlen(frame) + 1;
+		this->frame = new char[length];
+		strcpy_s(this->frame, length, frame);
+	}
+
+	~EffectFrame()
+	{
+		SafeDelete(frame);
+	}
+
+	// 문자열 변수 (화면에 보여줄 문자열).
+	char* frame = nullptr;
+
+	// 재생 시간.
+	float playTime = 0.0f;
+};
+
 class EnemyDestroyEffect : public Actor
 {
 	RTTI_DECLARATIONS(EnemyDestroyEffect, Actor)

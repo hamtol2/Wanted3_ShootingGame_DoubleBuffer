@@ -1,48 +1,56 @@
 #include "EnemyDestroyEffect.h"
 
 // 효과 재생에 사용할 문자열 시퀀스 (일종의 애니메이션 프레임).
-static const char* sequence[] =
+static const EffectFrame sequence[] =
 {
-	"  @  ",
-	" @@  ",
-	" @@@ ",
-	"@@@@",
-	"@@@@@",
-	"  +1 ",
-	"  +1 ",
-	"  +1 ",
-	"  +1 ",
+	EffectFrame("  @  ", 0.08f),
+	EffectFrame(" @@  ", 0.08f),
+	EffectFrame(" @@@ ", 0.08f),
+	EffectFrame("@@@@ ", 0.08f),
+	EffectFrame("  +1 ", 1.0f)
 };
 
 EnemyDestroyEffect::EnemyDestroyEffect(const Vector2& position)
-	: Actor(sequence[0], Color::Red, position)
+	: Actor(sequence[0].frame, Color::Red, position)
 {
+	// 애니메이션 시퀀스 개수 구하기.
 	effectSequenceCount = sizeof(sequence) / sizeof(sequence[0]);
 
-	timer.SetTargetTime(0.05f);
+	// 다음 애니메이션까지 대기할 시간.
+	timer.SetTargetTime(sequence[0].playTime);
 }
 
 void EnemyDestroyEffect::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
+	// 애니메이션 재생을 위한 타이머 업데이트.
 	timer.Tick(deltaTime);
 	if (!timer.IsTimeout())
 	{
 		return;
 	}
-
-	timer.Reset();
+	
+	// 애니메이션 재생 끝났는지 확인.
+	// 끝났으면 삭제.
 	if (currentSequenceIndex == effectSequenceCount - 1)
 	{
 		Destroy();
 		return;
 	}
 
+	// 프레임 업데이트.
 	++currentSequenceIndex;
+	timer.Reset();
 
+	// 다음 시퀀스에서 재생할 시간으로 타이머 재설정.
+	timer.SetTargetTime(sequence[currentSequenceIndex].playTime);
+
+	// 액터의 기존 이미지 제거.
 	SafeDelete(image);
-	size_t length = strlen(sequence[currentSequenceIndex]) + 1;
+
+	// 애니메이션 프레임에 사용할 문자열을 액터에 복사.
+	size_t length = strlen(sequence[currentSequenceIndex].frame) + 1;
 	image = new char[length];
-	strcpy_s(image, length, sequence[currentSequenceIndex]);
+	strcpy_s(image, length, sequence[currentSequenceIndex].frame);
 }
