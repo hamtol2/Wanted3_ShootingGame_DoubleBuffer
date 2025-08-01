@@ -57,14 +57,30 @@ void Player::Tick(float deltaTime)
 	{
 		Vector2 position = Position();
 		position.x -= 1;
-		SetPosition(position);
+
+		if (position.x >= 0)
+		{
+			SetPosition(position);
+		}
+		else
+		{
+			int test = 10;
+		}
 	}
 
 	if (Input::Get().GetKey(VK_RIGHT))
 	{
 		Vector2 position = Position();
 		position.x += 1;
-		SetPosition(position);
+
+		if (position.x + width < Engine::Get().Width())
+		{
+			SetPosition(position);
+		}
+		else
+		{
+ 			int test = 10;
+		}
 	}
 
 	// 연사 모드 전환.

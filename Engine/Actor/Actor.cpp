@@ -57,28 +57,28 @@ void Actor::SetPosition(const Vector2& newPosition)
 	// 예외처리 (화면 벗어났는지 확인).
 
 	// 왼쪽 가장자리가 화면 왼쪽을 벗어났는지.
-	if (newPosition.x < 0)
-	{
-		return;
-	}
+	//if (newPosition.x < 0)
+	//{
+	//	return;
+	//}
 
-	// 오른쪽 가장자리가 화면 오른쪽을 벗어났는지.
-	if (newPosition.x + width > Engine::Get().Width())
-	{
-		return;
-	}
+	//// 오른쪽 가장자리가 화면 오른쪽을 벗어났는지.
+	//if (newPosition.x + width > Engine::Get().Width())
+	//{
+	//	return;
+	//}
 
-	// 위쪽 가장자리가 화면의 위를 벗어났는지
-	if (newPosition.y < 0)
-	{
-		return;
-	}
+	//// 위쪽 가장자리가 화면의 위를 벗어났는지
+	//if (newPosition.y < 0)
+	//{
+	//	return;
+	//}
 
-	// 화면 아래를 벗어났는지
-	if (newPosition.y - 1 > Engine::Get().Height())
-	{
-		return;
-	}
+	//// 화면 아래를 벗어났는지
+	//if (newPosition.y - 1 > Engine::Get().Height())
+	//{
+	//	return;
+	//}
 
 	// 같으면 업데이트 안함.
 	if (position == newPosition)

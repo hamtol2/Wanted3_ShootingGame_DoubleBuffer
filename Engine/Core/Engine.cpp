@@ -151,26 +151,90 @@ void Engine::WriteToBuffer(
 {
 	// 문자열 길이.
 	int length = static_cast<int>(strlen(image));
+	int finalLength = length;
+
+	// 최종 위치.
+	Vector2 finalPosition = position;
+
+	// @Incomplte: 화면 벗어난 글자만 빼는 로직 구현중.
+	// 화면 왼쪽으로 벗어나는지 확인.
+	char* finalImage = nullptr;
+	bool originalImageChanged = false;
+	if (position.x < 0)
+	{
+		// 정상 위치(양수 좌표)에 있는 글자 수 계산.
+		finalLength = length + position.x;
+
+		// 메모리 할당/초기화.
+		finalImage = new char[finalLength + 1];
+		memset(finalImage, 0, finalLength + 1);
+
+		// 필요한 문자만 복사.
+		strcpy_s(finalImage, finalLength + 1, image + (length - finalLength));
+
+		// 최종 위치 보정.
+		finalPosition.x = 0;
+
+		// 원래 이미지(문자열) 값이 변경됐다고 표시.
+		originalImageChanged = true;
+	}
+
+	// @Incomplete: 화면 벗어난 글자만 빼는 로직 작성중.
+	// 화면 오른쪽으로 벗어나는지 확인.
+	if (position.x + length > settings.width)
+	{
+		// 정상 위치(화면 안쪽)에 있는 글자 수 계산.
+		finalLength = settings.width - position.x;
+
+		// 메모리 할당/초기화.
+		finalImage = new char[finalLength + 1];
+		memset(finalImage, 0, finalLength + 1);
+
+		// 필요한 문자만 복사.
+		memcpy(finalImage, image, finalLength);
+
+		// 원래 이미지(문자열) 값이 변경됐다고 표시.
+		originalImageChanged = true;
+	}
 
 	// 문자열 기록.
-	for (int ix = 0; ix < length; ++ix)
+	for (int ix = 0; ix < finalLength; ++ix)
 	{
-		// @Todo: 화면 버퍼 크기 안 넘어가게 예외처리 필요함.
-
 		// 기록할 문자 위치.
-		int index = (position.y * (settings.width)) + position.x + ix;
+		// @Incomplete: 화면 버퍼 크기 안 넘어가게 예외처리 필요함.
+		int index = (position.y * (settings.width)) + finalPosition.x + ix;
 
+		// 그리려는 대상의 sortingOrder가 현재 그려져있는 글자의 값보다 작으면 안그리기. 
+		// (글자가 겹치는 경우의 처리).
 		if (imageBuffer->sortingOrderArray[index] > sortingOrder)
 		{
 			continue;
 		}
 
-		// 버퍼에 문자/색상 기록.
-		imageBuffer->charInfoArray[index].Char.AsciiChar = image[ix];
+		// 버퍼에 문자 기록.
+		// 원래 이미지 값이 변경된 경우에는 변경된 문자열을 버퍼에 기록.
+		if (originalImageChanged)
+		{
+			imageBuffer->charInfoArray[index].Char.AsciiChar = finalImage[ix];
+		}
+
+		// 문자열 변경이 없었다면 원래 문자열을 버퍼에 기록.
+		else
+		{
+			imageBuffer->charInfoArray[index].Char.AsciiChar = image[ix];
+		}
+		
+		// 색상 기록.
 		imageBuffer->charInfoArray[index].Attributes = (WORD)color;
 		
 		// 뎊스 기록.
 		imageBuffer->sortingOrderArray[index] = sortingOrder;
+	}
+
+	// finalImage를 생성한 경우, 메모리 해제.
+	if (originalImageChanged && finalImage)
+	{
+		SafeDelete(finalImage);
 	}
 }
 

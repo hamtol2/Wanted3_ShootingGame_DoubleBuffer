@@ -1,4 +1,5 @@
 #include "EnemyDestroyEffect.h"
+#include "Engine.h"
 
 // 효과 재생에 사용할 문자열 시퀀스 (일종의 애니메이션 프레임).
 static const EffectFrame sequence[] =
@@ -13,6 +14,11 @@ static const EffectFrame sequence[] =
 EnemyDestroyEffect::EnemyDestroyEffect(const Vector2& position)
 	: Actor(sequence[0].frame, Color::Red, position)
 {
+	int effectFrameImageLength = 6;
+	this->position.x = position.x < 0 ? effectFrameImageLength + position.x : position.x;
+	this->position.x = position.x + effectFrameImageLength > Engine::Get().Width() ?
+		position.x - effectFrameImageLength : position.x;
+
 	// 애니메이션 시퀀스 개수 구하기.
 	effectSequenceCount = sizeof(sequence) / sizeof(sequence[0]);
 

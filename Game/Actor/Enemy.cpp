@@ -44,7 +44,9 @@ void Enemy::Tick(float deltaTime)
 	xPosition = xPosition + moveSpeed * dir * deltaTime;
 
 	// 화면 밖에 벗어났는지 확인.
-	if (xPosition < 0.0f || (int)xPosition > Engine::Get().Width() - width)
+	//if (xPosition + width - 1 < 0.0f || (int)xPosition > Engine::Get().Width() - width)
+	if ((int)xPosition + width < 0
+		|| (int)xPosition > Engine::Get().Width() - 1)
 	{
 		// 화면에서 벗어나면 액터 제거.
 		Destroy();
@@ -70,7 +72,8 @@ void Enemy::Tick(float deltaTime)
 
 	// 타이머 변수 정리.
 	timer.Reset();
-	timer.SetTargetTime(Utils::RandomFloat(1.0f, 3.0f));
+	//timer.SetTargetTime(Utils::RandomFloat(1.0f, 3.0f));
+	timer.SetTargetTime(10000.0f);
 }
 
 void Enemy::OnDestroy()
