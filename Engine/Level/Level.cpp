@@ -33,6 +33,18 @@ void Level::AddActor(Actor* newActor)
 
 void Level::DestroyActor(Actor* destroyedActor)
 {
+	// 중복 검사.
+	if (destroyRequstedActors.size() > 0)
+	{
+		for (const Actor* const actor : destroyRequstedActors)
+		{
+			if (actor == destroyedActor)
+			{
+				return;
+			}
+		}
+	}
+
 	// 대기 배열에 추가.
 	destroyRequstedActors.emplace_back(destroyedActor);
 }
@@ -137,18 +149,18 @@ void Level::ProcessAddAndDestroyActors()
 
 		++iterator;
 	}
-
+	
 	// destroyRequstedActors 배열을 순회하면서 액터 delete.
-	for (auto* actor : destroyRequstedActors)
+	for (auto*& actor : destroyRequstedActors)
 	{
 		// 액터가 그렸던 곳 지우기.
 		Utils::SetConsolePosition(actor->position);
 
 		// 콘솔에 빈문자 출력해서 지우기.
-		for (int ix = 0; ix < actor->width; ++ix)
-		{
-			std::cout << " ";
-		}
+		//for (int ix = 0; ix < actor->width; ++ix)
+		//{
+		//	std::cout << " ";
+		//}
 
 		// 리소스 해제.
 		SafeDelete(actor);

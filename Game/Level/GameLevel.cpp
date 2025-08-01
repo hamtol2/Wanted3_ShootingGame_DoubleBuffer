@@ -24,7 +24,9 @@ static const char* enemyType[] =
 GameLevel::GameLevel()
 {
 	// 플레이어 추가.
-	AddActor(new Player());
+	Player* player = new Player();
+	playerWidth = player->Width();
+	AddActor(player);
 
 	// 테스트 용도.
 	//AddActor(new Enemy());
@@ -178,6 +180,17 @@ void GameLevel::ProcessCollisionPlayerAndEnemyBullet()
 	}
 }
 
+void GameLevel::ShowGameScore()
+{
+	// 스코어 보여주기.
+	// Score: 0 이런식의 문자열 만들기.
+	char buffer[20] = { };
+	sprintf_s(buffer, 20, "Score: %d", score);
+
+	// 출력.
+	Engine::Get().WriteToBuffer(Vector2(1, Engine::Get().Height() - 1), buffer);
+}
+
 void GameLevel::PrintMenu()
 {
 	static Vector2 position(Engine::Get().Width() / 2 - 5, Engine::Get().Height() - 1);
@@ -194,11 +207,23 @@ void GameLevel::Render()
 	// 게임 종료 시 처리.
 	if (isPlayerDead)
 	{
+		// 다음에 그릴 위치가 화면 밖을 넘어가지 않도록 보정.
+		// 아래 문자열 중에서 길이가 가장 긴 문자열을 기준으로 위치 보정.
+		int longestStringLength = (int)strlen("Game Over!");
+		int x = playerDeadPosition.x + longestStringLength > Engine::Get().Width() ?
+			Engine::Get().Width() - longestStringLength : playerDeadPosition.x;
 		int y = playerDeadPosition.y;
-		Engine::Get().WriteToBuffer(Vector2(playerDeadPosition.x, y - 1), "   .   ", Color::Red);
-		Engine::Get().WriteToBuffer(Vector2(playerDeadPosition.x, y), " .  .  .", Color::Red);
-		Engine::Get().WriteToBuffer(Vector2(playerDeadPosition.x, y + 1), "..:V:..", Color::Red);
-		Engine::Get().WriteToBuffer(Vector2(playerDeadPosition.x, y + 2), "Game Over!", Color::Red);
+		Engine::Get().WriteToBuffer(Vector2(x, y - 3), "   .   ", Color::Red);
+		Engine::Get().WriteToBuffer(Vector2(x, y - 2), " .  .  .", Color::Red);
+		Engine::Get().WriteToBuffer(Vector2(x, y - 1), "..:V:..", Color::Red);
+		Engine::Get().WriteToBuffer(Vector2(x, y), "Game Over!", Color::Red);
+
+		// 스코어 보여주기.
+		// Score: 0 이런식의 문자열 만들기.
+		ShowGameScore();
+
+		// 위에서 출력 요청한 글자를 바로 화면에 보이도록 함수 호출.
+		Engine::Get().PresentImmediately();
 
 		// 잠깐 정지(대략 2초).
 		Sleep(2000);
@@ -206,10 +231,5 @@ void GameLevel::Render()
 	}
 
 	// 스코어 보여주기.
-	// Score: 0 이런식의 문자열 만들기.
-	char buffer[20] = { };
-	sprintf_s(buffer, 20, "Score: %d", score);
-
-	// 출력.
-	Engine::Get().WriteToBuffer(Vector2(1, Engine::Get().Height() - 1), buffer);
+	ShowGameScore();
 }

@@ -287,6 +287,12 @@ void Engine::Present()
 	currentRenderTargetIndex = 1 - currentRenderTargetIndex;
 }
 
+void Engine::PresentImmediately()
+{
+	GetRenderer()->Render(imageBuffer);
+	Present();
+}
+
 void Engine::LoadEngineSettings()
 {
 	// 엔진 설정 파일 열기.
@@ -371,19 +377,19 @@ void Engine::ClearImageBuffer()
 	{
 		for (int x = 0; x < settings.width; ++x)
 		{
-			CHAR_INFO& buffer = imageBuffer[(y * (settings.width + 1)) + x];
+			CHAR_INFO& buffer = imageBuffer[(y * (settings.width)) + x];
 			buffer.Char.AsciiChar = ' ';
 			buffer.Attributes = 0;
 		}
 
 		// 각 줄 끝에 개행 문자 추가.
-		CHAR_INFO& buffer = imageBuffer[(y * (settings.width + 1)) + settings.width];
+		CHAR_INFO& buffer = imageBuffer[(y * (settings.width)) + settings.width];
 		buffer.Char.AsciiChar = '\n';
 		buffer.Attributes = 0;
 	}
 
 	// 마지막에 널 문자 추가.
-	CHAR_INFO& buffer = imageBuffer[(settings.width + 1) * settings.height];
+	CHAR_INFO& buffer = imageBuffer[(settings.width) * settings.height + 1];
 	buffer.Char.AsciiChar = '\0';
 	buffer.Attributes = 0;
 }

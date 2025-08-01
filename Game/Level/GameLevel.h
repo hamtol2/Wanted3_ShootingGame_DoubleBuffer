@@ -30,6 +30,8 @@ private:
 	void ProcessCollisionPlayerBulletAndEnemy();
 	void ProcessCollisionPlayerAndEnemyBullet();
 
+	void ShowGameScore();
+
 	void PrintMenu();
 
 private:
@@ -41,6 +43,9 @@ private:
 
 	// 플레이어의 죽음 처리를 위한 변수.
 	bool isPlayerDead = false;
+
+	// 플레이어가 그리는 문자열 길이.
+	int playerWidth = 0;
 
 	// 플레이어 죽은 위치.
 	Vector2 playerDeadPosition;
