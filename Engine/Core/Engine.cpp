@@ -143,7 +143,11 @@ void Engine::Run()
 	);
 }
 
-void Engine::WriteToBuffer(const Vector2& position, const char* image, Color color, int sortingOrder)
+void Engine::WriteToBuffer(
+	const Vector2& position, 
+	const char* image, 
+	Color color, 
+	int sortingOrder)
 {
 	// 문자열 길이.
 	int length = static_cast<int>(strlen(image));
@@ -164,6 +168,9 @@ void Engine::WriteToBuffer(const Vector2& position, const char* image, Color col
 		// 버퍼에 문자/색상 기록.
 		imageBuffer->charInfoArray[index].Char.AsciiChar = image[ix];
 		imageBuffer->charInfoArray[index].Attributes = (WORD)color;
+		
+		// 뎊스 기록.
+		imageBuffer->sortingOrderArray[index] = sortingOrder;
 	}
 }
 
