@@ -20,6 +20,31 @@ struct EngineSettings
 	float framerate = 0.0f;
 };
 
+// 뎊스 정보까지 저장할 수 있는 이미지 버퍼 구조체.
+struct ImageBuffer
+{
+	ImageBuffer(int bufferCount)
+	{
+		charInfoArray = new CHAR_INFO[bufferCount];
+		memset(charInfoArray, 0, sizeof(CHAR_INFO) * bufferCount);
+		
+		sortingOrderArray = new int[bufferCount];
+		memset(charInfoArray, 0, sizeof(int) * bufferCount);
+	}
+
+	~ImageBuffer()
+	{
+		SafeDeleteArray(charInfoArray);
+		SafeDeleteArray(sortingOrderArray);
+	}
+
+	// 콘솔에 그릴 때 사용할 구조체 (문자,색상 값 저장).
+	CHAR_INFO* charInfoArray = nullptr;
+
+	// 해당 위치에 그릴지를 판단할 때 사용할 뎊스 값(sortingOrder).
+	int* sortingOrderArray = nullptr;
+};
+
 class Level;
 class ScreenBuffer;
 class Engine_API Engine
@@ -36,7 +61,9 @@ public:
 	void Run();
 
 	// 문자열 그리기 요청 함수.
-	void WriteToBuffer(const Vector2& position, const char* image, Color color = Color::White);
+	void WriteToBuffer(
+		const Vector2& position, const char* image, Color color = Color::White, int sortingOrder = 0
+	);
 
 	// 버퍼를 곧바로 교환 요청할 때 사용하는 함수.
 	void PresentImmediately();
@@ -98,8 +125,10 @@ protected:
 	EngineSettings settings;
 
 	// 백버퍼(프레임).
-	CHAR_INFO* imageBuffer = nullptr;
-
+	//CHAR_INFO* imageBuffer = nullptr;
+	// 문자, 색상, 뎊스(sortingOrder)까지 저장하는 버퍼.
+	ImageBuffer* imageBuffer = nullptr;
+	
 	// 이중 버퍼.
 	ScreenBuffer* renderTargets[2] = { };
 

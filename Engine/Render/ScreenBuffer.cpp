@@ -31,6 +31,13 @@ ScreenBuffer::ScreenBuffer(const Vector2& screenSize)
 	// 커서 안보이게 설정.
 	CONSOLE_CURSOR_INFO info{ 1, FALSE };
 	SetConsoleCursorInfo(buffer, &info);
+
+	// @Test.
+	DWORD mode;
+	GetConsoleMode(buffer, &mode);
+	mode |= ENABLE_QUICK_EDIT_MODE;
+	mode |= ENABLE_EXTENDED_FLAGS;
+	SetConsoleMode(buffer, mode);
 }
 
 ScreenBuffer::ScreenBuffer(HANDLE console, const Vector2& screenSize)
@@ -46,6 +53,13 @@ ScreenBuffer::ScreenBuffer(HANDLE console, const Vector2& screenSize)
 	bufferInfo.dwSize.X = screenSize.x + 1;
 	bufferInfo.dwSize.Y = screenSize.y + 1;
 	SetConsoleScreenBufferInfoEx(buffer, &bufferInfo);
+
+	// @Test.
+	DWORD mode;
+	GetConsoleMode(buffer, &mode);
+	mode |= ENABLE_QUICK_EDIT_MODE;
+	mode |= ENABLE_EXTENDED_FLAGS;
+	SetConsoleMode(buffer, mode);
 }
 
 ScreenBuffer::~ScreenBuffer()

@@ -44,9 +44,12 @@ Engine::Engine()
 	// 랜덤 종자값(seed) 설정.
 	srand(static_cast<unsigned int>(time(nullptr)));
 
-	// 이미지 버퍼 생성.
+	// 이미지 버퍼 생성 / 콘솔에 보낼 버퍼 생성.
 	Vector2 screenSize(settings.width, settings.height);
-	imageBuffer = new CHAR_INFO[(screenSize.x + 1) * screenSize.y + 1];
+	//imageBuffer = new CHAR_INFO[(screenSize.x + 1) * screenSize.y + 1];
+	//imageBuffer = new ImageBuffer[(screenSize.x + 1) * screenSize.y + 1];
+	imageBuffer = new ImageBuffer((screenSize.x + 1) * screenSize.y + 1);
+	//charInfo = new CHAR_INFO[(screenSize.x + 1) * screenSize.y + 1];
 
 	// 버퍼 초기화 (문자 버퍼).
 	ClearImageBuffer();
@@ -60,6 +63,9 @@ Engine::Engine()
 
 	// 콘솔 창 이벤트 등록.
 	SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
+
+	// cls 호출.
+	system("cls");
 }
 
 Engine::~Engine()
@@ -137,7 +143,7 @@ void Engine::Run()
 	);
 }
 
-void Engine::WriteToBuffer(const Vector2& position, const char* image, Color color)
+void Engine::WriteToBuffer(const Vector2& position, const char* image, Color color, int sortingOrder)
 {
 	// 문자열 길이.
 	int length = static_cast<int>(strlen(image));
@@ -145,14 +151,20 @@ void Engine::WriteToBuffer(const Vector2& position, const char* image, Color col
 	// 문자열 기록.
 	for (int ix = 0; ix < length; ++ix)
 	{
+		// @Todo: 화면 버퍼 크기 안 넘어가게 예외처리 필요함.
+
 		// 기록할 문자 위치.
 		int index = (position.y * (settings.width)) + position.x + ix;
 
-		// 버퍼에 문자/색상 기록.
-		imageBuffer[index].Char.AsciiChar = image[ix];
-		imageBuffer[index].Attributes = (WORD)color;
-	}
+		if (imageBuffer->sortingOrderArray[index] > sortingOrder)
+		{
+			continue;
+		}
 
+		// 버퍼에 문자/색상 기록.
+		imageBuffer->charInfoArray[index].Char.AsciiChar = image[ix];
+		imageBuffer->charInfoArray[index].Attributes = (WORD)color;
+	}
 }
 
 void Engine::AddLevel(Level* newLevel)
@@ -172,7 +184,9 @@ void Engine::CleanUp()
 	SafeDelete(mainLevel);
 
 	// 문자 버퍼 삭제.
-	SafeDeleteArray(imageBuffer);
+	//SafeDeleteArray(imageBuffer);
+	//SafeDeleteArray(charInfo);
+	SafeDelete(imageBuffer);
 
 	// 렌더 타겟 삭제.
 	SafeDelete(renderTargets[0]);
@@ -215,34 +229,11 @@ void Engine::BeginPlay()
 
 void Engine::Tick(float deltaTime)
 {
-	//std::cout 
-	//	<< "DeltaTime: " << deltaTime 
-	//	<< ", FPS: " <<  (1.0f / deltaTime)
-	//	<< "\n";
-
-	//if (GetKeyDown('A'))
-	//{
-	//	std::cout << "KeyDown\n";
-	//}
-	//if (GetKey('A'))
-	//{
-	//	std::cout << "Key\n";
-	//}
-	//if (GetKeyUp('A'))
-	//{
-	//	std::cout << "KeyUp\n";
-	//}
-
 	// 레벨 업데이트.
 	if (mainLevel)
 	{
 		mainLevel->Tick(deltaTime);
 	}
-
-	//if (GetKeyDown(VK_ESCAPE))
-	//{
-	//	Quit();
-	//}
 }
 
 void Engine::Clear()
@@ -253,15 +244,6 @@ void Engine::Clear()
 
 void Engine::Render()
 {
-	//SetConsoleTextAttribute(
-	//	GetStdHandle(STD_OUTPUT_HANDLE),
-	//	FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
-	//);
-
-	//Utils::SetConsoleTextColor(
-	//	FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
-	//);
-
 	// 화면 지우기.
 	Clear();
 
@@ -272,7 +254,8 @@ void Engine::Render()
 	}
 
 	// 백버퍼에 데이터 쓰기.
-	GetRenderer()->Render(imageBuffer);
+	//GetRenderer()->Render(imageBuffer);
+	GetRenderer()->Render(imageBuffer->charInfoArray);
 
 	// 버퍼 교환.
 	Present();
@@ -289,7 +272,10 @@ void Engine::Present()
 
 void Engine::PresentImmediately()
 {
-	GetRenderer()->Render(imageBuffer);
+	// 백버퍼에 데이터 쓰기.
+	//GetRenderer()->Render(imageBuffer);
+	GetRenderer()->Render(imageBuffer->charInfoArray);
+
 	Present();
 }
 
@@ -377,19 +363,25 @@ void Engine::ClearImageBuffer()
 	{
 		for (int x = 0; x < settings.width; ++x)
 		{
-			CHAR_INFO& buffer = imageBuffer[(y * (settings.width)) + x];
+			int index = (y * (settings.width)) + x;
+			CHAR_INFO& buffer = imageBuffer->charInfoArray[index];
 			buffer.Char.AsciiChar = ' ';
 			buffer.Attributes = 0;
+			imageBuffer->sortingOrderArray[index] = -1;
 		}
 
 		// 각 줄 끝에 개행 문자 추가.
-		CHAR_INFO& buffer = imageBuffer[(y * (settings.width)) + settings.width];
+		int index = (y * (settings.width)) + settings.width;
+		CHAR_INFO& buffer = imageBuffer->charInfoArray[index];
 		buffer.Char.AsciiChar = '\n';
 		buffer.Attributes = 0;
+		imageBuffer->sortingOrderArray[index] = -1;
 	}
 
 	// 마지막에 널 문자 추가.
-	CHAR_INFO& buffer = imageBuffer[(settings.width) * settings.height + 1];
+	int index = (settings.width) * settings.height + 1;
+	CHAR_INFO& buffer = imageBuffer->charInfoArray[index];
 	buffer.Char.AsciiChar = '\0';
 	buffer.Attributes = 0;
+	imageBuffer->sortingOrderArray[index] = -1;
 }

@@ -4,7 +4,6 @@
 #include "Level/Level.h"
 #include "Actor/EnemyBullet.h"
 #include "Actor/EnemyDestroyEffect.h"
-//using namespace Utils;
 
 Enemy::Enemy(const char* image, int yPosition)
 	: Actor(image)
@@ -65,7 +64,7 @@ void Enemy::Tick(float deltaTime)
 	// 발사.
 	// 적 탄약 생성 요청.
 	owner->AddActor(new EnemyBullet(
-		Vector2(position.x + width / 2, position.y + 1),
+		Vector2(position.x + width / 2, position.y),
 		Utils::RandomFloat(10.0f, 20.0f))
 	);
 
