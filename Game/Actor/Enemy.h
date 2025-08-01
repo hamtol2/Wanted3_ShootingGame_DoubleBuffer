@@ -28,6 +28,9 @@ public:
 
 	virtual void OnDestroy() override;
 
+	// 플레이어 탄약에 맞았을 때 호출할 함수.
+	void OnDamaged();
+
 private:
 
 	// 이동 방향.

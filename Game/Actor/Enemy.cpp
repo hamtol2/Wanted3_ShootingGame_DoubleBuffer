@@ -79,6 +79,10 @@ void Enemy::Tick(float deltaTime)
 void Enemy::OnDestroy()
 {
 	super::OnDestroy();
+}
 
+void Enemy::OnDamaged()
+{
+	Destroy();
 	owner->AddActor(new EnemyDestroyEffect(position));
 }

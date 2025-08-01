@@ -122,7 +122,12 @@ void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
 			// 두 액터가 서로 겹쳤는지 확인.
 			if (bullet->TestIntersect(enemy))
 			{
-				enemy->Destroy();
+				//enemy->Destroy();
+
+				// 적에게 대미지 받았다고 알림.
+				enemy->OnDamaged();
+
+				// 플레이어 탄약 제거.
 				bullet->Destroy();
 
 				// 점수를 획득했기 때문에 점수 증가 처리해야 함.
