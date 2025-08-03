@@ -20,6 +20,15 @@ Player::Player(float fireInterval, FireMode fireMode)
 
 	// 타이머 시간 설정.
 	timer.SetTargetTime(fireInterval);
+
+	// keydown 콜백 등록.
+	Input::Get().RegisterKeydownCallback<Player, &Player::Quit>(VK_ESCAPE, this);
+	Input::Get().RegisterKeydownCallback<Player, &Player::Fire>(VK_SPACE, this);
+	Input::Get().RegisterKeydownCallback<Player, &Player::ChangeFireMode>('R', this);
+
+	Input::Get().RegisterKeyrepeatCallback<Player, &Player::FireInterval>(VK_SPACE, this);
+	Input::Get().RegisterKeyrepeatCallback<Player, &Player::MoveLeft>(VK_LEFT, this);
+	Input::Get().RegisterKeyrepeatCallback<Player, &Player::MoveRight>(VK_RIGHT, this);
 }
 
 void Player::Tick(float deltaTime)
@@ -27,69 +36,36 @@ void Player::Tick(float deltaTime)
 	super::Tick(deltaTime);
 
 	// 입력 처리.
-	if (Input::Get().GetKeyDown(VK_ESCAPE))
+	//if (Input::Get().GetKeyDown(VK_ESCAPE))
+	//{
+	//	// 게임 종료.
+	//	QuitGame();
+	//	return;
+	//}
+
+	// 타이머 업데이트.
+	timer.Tick(deltaTime);
+}
+
+void Player::MoveRight()
+{
+	Vector2 position = Position();
+	position.x += 1;
+
+	if (position.x + width < Engine::Get().Width())
 	{
-		// 게임 종료.
-		QuitGame();
-		return;
+		SetPosition(position);
 	}
+}
 
-	// 미사일 발사.
-	if (fireMode == FireMode::OneShot)
+void Player::MoveLeft()
+{
+	Vector2 position = Position();
+	position.x -= 1;
+
+	if (position.x >= 0)
 	{
-		if (Input::Get().GetKeyDown(VK_SPACE))
-		{
-			// 발사.
-			Fire();
-		}
-	}
-	else if (fireMode == FireMode::Repeat)
-	{
-		if (Input::Get().GetKey(VK_SPACE))
-		{
-			// 발사.
-			FireInterval(deltaTime);
-		}
-	}
-
-	// 방향키 입력.
-	if (Input::Get().GetKey(VK_LEFT))
-	{
-		Vector2 position = Position();
-		position.x -= 1;
-
-		if (position.x >= 0)
-		{
-			SetPosition(position);
-		}
-		else
-		{
-			int test = 10;
-		}
-	}
-
-	if (Input::Get().GetKey(VK_RIGHT))
-	{
-		Vector2 position = Position();
-		position.x += 1;
-
-		if (position.x + width < Engine::Get().Width())
-		{
-			SetPosition(position);
-		}
-		else
-		{
- 			int test = 10;
-		}
-	}
-
-	// 연사 모드 전환.
-	if (Input::Get().GetKeyDown('R'))
-	{
-		int mode = (int)fireMode;
-		mode = 1 - mode;
-
-		fireMode = (FireMode)mode;
+		SetPosition(position);
 	}
 }
 
@@ -102,11 +78,9 @@ void Player::Fire()
 	owner->AddActor(new PlayerBullet(bulletPosition));
 }
 
-void Player::FireInterval(float deltaTime)
+void Player::FireInterval()
 {
-	// 타이머 업데이트.
-	timer.Tick(deltaTime);
-	if (!timer.IsTimeout())
+	if (!CanShoot() || fireMode != FireMode::Repeat)
 	{
 		return;
 	}
@@ -116,4 +90,22 @@ void Player::FireInterval(float deltaTime)
 	// 탄약 생성.
 	Vector2 bulletPosition(position.x + width / 2, position.y);
 	owner->AddActor(new PlayerBullet(bulletPosition));
+}
+
+void Player::ChangeFireMode()
+{
+	int mode = (int)fireMode;
+	mode = 1 - mode;
+
+	fireMode = (FireMode)mode;
+}
+
+void Player::Quit()
+{
+	QuitGame();
+}
+
+bool Player::CanShoot()
+{
+	return timer.IsTimeout();
 }

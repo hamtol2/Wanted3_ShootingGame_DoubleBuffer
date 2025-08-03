@@ -120,6 +120,7 @@ void Engine::Run()
 		if (deltaTime >= oneFrameTime)
 		{
 			BeginPlay();
+			input.DispatchCallbacks();
 			Tick(deltaTime);
 			Render();
 

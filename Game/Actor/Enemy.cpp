@@ -72,8 +72,8 @@ void Enemy::Tick(float deltaTime)
 
 	// 타이머 변수 정리.
 	timer.Reset();
-	//timer.SetTargetTime(Utils::RandomFloat(1.0f, 3.0f));
-	timer.SetTargetTime(10000.0f);
+	timer.SetTargetTime(Utils::RandomFloat(1.0f, 3.0f));
+	//timer.SetTargetTime(10000.0f);
 }
 
 void Enemy::OnDestroy()

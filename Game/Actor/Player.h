@@ -28,8 +28,16 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 private:
+	void MoveRight();
+	void MoveLeft();
+
 	void Fire();
-	void FireInterval(float deltaTime);
+	void FireInterval();
+
+	void ChangeFireMode();
+	void Quit();
+
+	bool CanShoot();
 
 private:
 	// 발사 모드.

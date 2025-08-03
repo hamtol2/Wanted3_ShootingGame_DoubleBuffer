@@ -181,6 +181,7 @@ xcopy $(OutDir)\Engine.dll ..\Lib\Engine\ /y</Command>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
     <ClInclude Include="Core\Core.h" />
+    <ClInclude Include="Core\Delegate.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\RTTI.h" />

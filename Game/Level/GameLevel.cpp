@@ -52,7 +52,7 @@ void GameLevel::Tick(float deltaTime)
 	ProcessCollisionPlayerBulletAndEnemy();
 
 	// 적의 탄약과 플레이어의 충돌 처리.
-	//ProcessCollisionPlayerAndEnemyBullet();
+	ProcessCollisionPlayerAndEnemyBullet();
 }
 
 void GameLevel::SpawnEnemies(float deltaTime)
@@ -68,8 +68,8 @@ void GameLevel::SpawnEnemies(float deltaTime)
 
 	// 타이머 정리.
 	enemySpawnTimer.Reset();
-	//enemySpawnTimer.SetTargetTime(Utils::RandomFloat(0.5f, 1.5f));
-	enemySpawnTimer.SetTargetTime(5.0f);
+	enemySpawnTimer.SetTargetTime(Utils::RandomFloat(0.5f, 1.5f));
+	//enemySpawnTimer.SetTargetTime(5.0f);
 
 	// 적 생성 로직.
 	// 배열 길이 구하기.

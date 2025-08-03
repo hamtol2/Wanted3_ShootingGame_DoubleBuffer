@@ -15,8 +15,34 @@ void Input::ProcessInput()
 	// 키 입력 확인.
 	for (int ix = 0; ix < 255; ++ix)
 	{
-		keyStates[ix].isKeyDown
-			= GetAsyncKeyState(ix) & 0x8000;
+		keyStates[ix].isKeyDown = GetAsyncKeyState(ix) & 0x8000;
+	}
+}
+
+void Input::DispatchCallbacks()
+{
+	for (auto& pair : keydownCallbacks)
+	{
+		if (GetKeyDown(pair.first))
+		{
+			pair.second.Invoke();
+		}
+	}
+
+	for (auto& pair : keyupCallbacks)
+	{
+		if (GetKeyUp(pair.first))
+		{
+			pair.second.Invoke();
+		}
+	}
+
+	for (auto& pair : keyrepeatCallbacks)
+	{
+		if (GetKey(pair.first))
+		{
+			pair.second.Invoke();
+		}
 	}
 }
 
@@ -24,8 +50,7 @@ void Input::SavePreviouseKeyStates()
 {
 	for (int ix = 0; ix < 255; ++ix)
 	{
-		keyStates[ix].previouseKeyDown
-			= keyStates[ix].isKeyDown;
+		keyStates[ix].previouseKeyDown = keyStates[ix].isKeyDown;
 	}
 }
 
