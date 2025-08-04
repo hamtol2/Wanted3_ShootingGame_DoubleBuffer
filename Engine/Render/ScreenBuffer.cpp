@@ -31,7 +31,8 @@ ScreenBuffer::ScreenBuffer(const Vector2& screenSize)
 	}
 
 	// 콘솔 버퍼 크기 설정.
-	BOOL setScreenBufferSizeResult = SetConsoleScreenBufferSize(buffer, Vector2(screenSize.x + 1, screenSize.y + 1));
+	BOOL setScreenBufferSizeResult 
+		= SetConsoleScreenBufferSize(buffer, Vector2(screenSize.x + 1, screenSize.y + 1));
 	if (!setScreenBufferSizeResult)
 	{
 		std::cerr << "Failed to set screen buffer size\n";
@@ -56,7 +57,8 @@ ScreenBuffer::ScreenBuffer(HANDLE console, const Vector2& screenSize)
 	}
 
 	// 콘솔 버퍼 크기 설정.
-	BOOL setScreenBufferSizeResult = SetConsoleScreenBufferSize(buffer, Vector2(screenSize.x + 1, screenSize.y + 1));
+	BOOL setScreenBufferSizeResult 
+		= SetConsoleScreenBufferSize(buffer, Vector2(screenSize.x + 1, screenSize.y + 1));
 	if (!setScreenBufferSizeResult)
 	{
 		std::cerr << "Failed to set screen buffer size\n";

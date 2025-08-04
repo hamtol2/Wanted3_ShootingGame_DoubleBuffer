@@ -46,10 +46,7 @@ Engine::Engine()
 
 	// 이미지 버퍼 생성 / 콘솔에 보낼 버퍼 생성.
 	Vector2 screenSize(settings.width, settings.height);
-	//imageBuffer = new CHAR_INFO[(screenSize.x + 1) * screenSize.y + 1];
-	//imageBuffer = new ImageBuffer[(screenSize.x + 1) * screenSize.y + 1];
 	imageBuffer = new ImageBuffer((screenSize.x + 1) * screenSize.y + 1);
-	//charInfo = new CHAR_INFO[(screenSize.x + 1) * screenSize.y + 1];
 
 	// 버퍼 초기화 (문자 버퍼).
 	ClearImageBuffer();
@@ -63,6 +60,10 @@ Engine::Engine()
 
 	// 콘솔 창 이벤트 등록.
 	SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
+
+	// 콘솔 창 크기 변경 안되도록 설정.
+	// "관리자 모드에서만 제대로 실행됨"
+	DisableToResizeWindow();
 
 	// cls 호출.
 	system("cls");
@@ -134,6 +135,17 @@ void Engine::Run()
 			if (mainLevel)
 			{
 				mainLevel->ProcessAddAndDestroyActors();
+			}
+
+			// @Test.
+			CONSOLE_SCREEN_BUFFER_INFO info = {};
+			auto result = GetConsoleScreenBufferInfo(GetRenderer()->buffer, &info);
+			if (result)
+			{
+				char title[100] = {};
+				sprintf_s(title, 100, "dwSize: (%d, %d)", 
+					info.dwSize.X, info.dwSize.Y);
+				SetConsoleTitleA(title);
 			}
 		}
 	}
@@ -289,6 +301,22 @@ int Engine::Height() const
 void Engine::OnInitialized()
 {
 
+}
+
+void Engine::DisableToResizeWindow()
+{
+	// 콘솔 창 핸들 가져오기.
+	HWND window = GetConsoleWindow();
+
+	// 콘솔 창에 설정된 스타일 값 가져오기.
+	LONG style = GetWindowLong(window, GWL_STYLE);
+
+	// 콘솔 창 스타일에서 크기 조절 관련 옵션 제거.
+	style &= ~WS_MAXIMIZEBOX;
+	style &= ~WS_SIZEBOX;
+
+	// 콘솔창에 변경된 스타일 적용.
+	SetWindowLongW(window, GWL_STYLE, style);
 }
 
 void Engine::BeginPlay()

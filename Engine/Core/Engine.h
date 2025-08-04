@@ -89,6 +89,9 @@ protected:
 	// 엔진/게임 초기화 시 사용 (레벨 추가 등).
 	virtual void OnInitialized();
 
+	// 콘솔 창 크기 조절 안되도록 할 때 사용하는 함수.
+	void DisableToResizeWindow();
+
 	void BeginPlay();
 	void Tick(float deltaTime = 0.0f);
 
@@ -109,7 +112,6 @@ protected:
 
 	// 글자 버퍼 지우는 함수.
 	void ClearImageBuffer();
-
 
 protected:
 	// 엔진 종료 플래그.
