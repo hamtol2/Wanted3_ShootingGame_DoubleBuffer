@@ -28,15 +28,26 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 private:
+
+	// 오른쪽 이동 함수.
 	void MoveRight();
+
+	// 왼쪽 이동 함수.
 	void MoveLeft();
 
+	// 한 발씩 발사하는 함수.
 	void Fire();
+
+	// 연사 모드 함수.
 	void FireInterval();
 
+	// 한 발씩 발사/연사 모드 변경 함수.
 	void ChangeFireMode();
+
+	// 게임 종료 함수.
 	void Quit();
 
+	// 연사 모드일 때 발사가 가능한지 확인하는 함수.
 	bool CanShoot();
 
 private:
@@ -47,5 +58,5 @@ private:
 	float fireInterval = 0.15f;
 
 	// 발사 간격 제어 타이머.
-	Timer timer;
+	Timer fireIntervaltimer;
 };

@@ -19,32 +19,25 @@ Player::Player(float fireInterval, FireMode fireMode)
 	SetPosition(Vector2(xPosition, yPosition));
 
 	// 타이머 시간 설정.
-	timer.SetTargetTime(fireInterval);
+	fireIntervaltimer.SetTargetTime(fireInterval);
 
 	// keydown 콜백 등록.
-	Input::Get().RegisterKeydownCallback<Player, &Player::Quit>(VK_ESCAPE, this);
-	Input::Get().RegisterKeydownCallback<Player, &Player::Fire>(VK_SPACE, this);
-	Input::Get().RegisterKeydownCallback<Player, &Player::ChangeFireMode>('R', this);
+	Input::Get().RegisterKeydownEvent<Player, &Player::Quit>(VK_ESCAPE, this);
+	Input::Get().RegisterKeydownEvent<Player, &Player::Fire>(VK_SPACE, this);
+	Input::Get().RegisterKeydownEvent<Player, &Player::ChangeFireMode>('R', this);
 
-	Input::Get().RegisterKeyrepeatCallback<Player, &Player::FireInterval>(VK_SPACE, this);
-	Input::Get().RegisterKeyrepeatCallback<Player, &Player::MoveLeft>(VK_LEFT, this);
-	Input::Get().RegisterKeyrepeatCallback<Player, &Player::MoveRight>(VK_RIGHT, this);
+	// keyrepeat 콜백 등록.
+	Input::Get().RegisterKeyrepeatEvent<Player, &Player::FireInterval>(VK_SPACE, this);
+	Input::Get().RegisterKeyrepeatEvent<Player, &Player::MoveLeft>(VK_LEFT, this);
+	Input::Get().RegisterKeyrepeatEvent<Player, &Player::MoveRight>(VK_RIGHT, this);
 }
 
 void Player::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
-
-	// 입력 처리.
-	//if (Input::Get().GetKeyDown(VK_ESCAPE))
-	//{
-	//	// 게임 종료.
-	//	QuitGame();
-	//	return;
-	//}
-
-	// 타이머 업데이트.
-	timer.Tick(deltaTime);
+	
+	// 연사 타이머 업데이트.
+	fireIntervaltimer.Tick(deltaTime);
 }
 
 void Player::MoveRight()
@@ -80,12 +73,15 @@ void Player::Fire()
 
 void Player::FireInterval()
 {
+	// 발사 가능 여부 확인.
+	// 충분한 시간이 지났는지 & 연사 모드 인지.
 	if (!CanShoot() || fireMode != FireMode::Repeat)
 	{
 		return;
 	}
 
-	timer.Reset();
+	// 타이머 리셋.
+	fireIntervaltimer.Reset();
 
 	// 탄약 생성.
 	Vector2 bulletPosition(position.x + width / 2, position.y);
@@ -94,6 +90,7 @@ void Player::FireInterval()
 
 void Player::ChangeFireMode()
 {
+	// 단발 모드 / 연사 모드 전환.
 	int mode = (int)fireMode;
 	mode = 1 - mode;
 
@@ -107,5 +104,6 @@ void Player::Quit()
 
 bool Player::CanShoot()
 {
-	return timer.IsTimeout();
+	// 연사 모드에서 발사가 가능한 충분한 시간이 지났는지 확인.
+	return fireIntervaltimer.IsTimeout();
 }

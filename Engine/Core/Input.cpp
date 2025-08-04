@@ -21,27 +21,54 @@ void Input::ProcessInput()
 
 void Input::DispatchCallbacks()
 {
-	for (auto& pair : keydownCallbacks)
+	// 키 눌림 이벤트 발행.
+	if (keydownCallbacks.size() > 0)
 	{
-		if (GetKeyDown(pair.first))
+		for (std::pair<const int, std::vector<Delegate>>& pair : keydownCallbacks)
 		{
-			pair.second.Invoke();
+			// 키 눌림 확인.
+			if (GetKeyDown(pair.first))
+			{
+				// 키 눌림 이벤트가 발생한 경우, 콜백 함수 호출.
+				for (Delegate& delegate : pair.second)
+				{
+					delegate();
+				}
+			}
 		}
 	}
 
-	for (auto& pair : keyupCallbacks)
+	// 키 눌림 해제 이벤트 발행.
+	if (keyupCallbacks.size() > 0)
 	{
-		if (GetKeyUp(pair.first))
+		for (std::pair<const int, std::vector<Delegate>>& pair : keyupCallbacks)
 		{
-			pair.second.Invoke();
+			// 키 눌림 해제 확인.
+			if (GetKeyUp(pair.first))
+			{
+				// 키 눌림 해제 이벤트가 발생한 경우, 콜백 함수 호출.
+				for (Delegate& delegate : pair.second)
+				{
+					delegate();
+				}
+			}
 		}
 	}
 
-	for (auto& pair : keyrepeatCallbacks)
+	// 키 눌림 반복 이벤트 발행.
+	if (keyrepeatCallbacks.size() > 0)
 	{
-		if (GetKey(pair.first))
+		for (std::pair<const int, std::vector<Delegate>>& pair : keyrepeatCallbacks)
 		{
-			pair.second.Invoke();
+			// 키 눌림 반복 이벤트 확인.
+			if (GetKey(pair.first))
+			{
+				// 키 눌림 반복 이벤트가 발생한 경우, 콜백 함수 호출.
+				for (Delegate& delegate : pair.second)
+				{
+					delegate();
+				}
+			}
 		}
 	}
 }
