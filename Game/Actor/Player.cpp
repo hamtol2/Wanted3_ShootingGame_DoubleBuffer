@@ -26,6 +26,9 @@ Player::Player(float fireInterval, FireMode fireMode)
 	Input::Get().RegisterKeydownEvent<Player, &Player::Fire>(VK_SPACE, this);
 	Input::Get().RegisterKeydownEvent<Player, &Player::ChangeFireMode>('R', this);
 
+	// @Test: 마우스 클릭 테스트.
+	//Input::Get().RegisterKeydownEvent<Player, &Player::OnClick>(VK_LBUTTON, this);
+
 	// keyrepeat 콜백 등록.
 	Input::Get().RegisterKeyrepeatEvent<Player, &Player::FireInterval>(VK_SPACE, this);
 	Input::Get().RegisterKeyrepeatEvent<Player, &Player::MoveLeft>(VK_LEFT, this);
@@ -35,6 +38,12 @@ Player::Player(float fireInterval, FireMode fireMode)
 void Player::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
+
+	if (Input::Get().GetKeyDown(VK_LBUTTON))
+	{
+		//__debugbreak();
+		OnClick();
+	}
 	
 	// 연사 타이머 업데이트.
 	fireIntervaltimer.Tick(deltaTime);
@@ -95,6 +104,14 @@ void Player::ChangeFireMode()
 	mode = 1 - mode;
 
 	fireMode = (FireMode)mode;
+}
+
+void Player::OnClick()
+{
+	OutputDebugStringA("마우스 클릭됨\n");
+
+	Vector2 cursorPosition = Input::Get().MousePosition();
+	SetPosition(cursorPosition);
 }
 
 void Player::Quit()

@@ -36,4 +36,7 @@ private:
 
 	// 콘솔 화면 크기.
 	Vector2 screenSize;
+
+	// 소멸자에서 CloseHandle을 해야하는지 여부.
+	bool shouldCloseHandle = true;
 };

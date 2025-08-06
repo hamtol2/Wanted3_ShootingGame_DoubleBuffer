@@ -45,7 +45,7 @@ ScreenBuffer::ScreenBuffer(const Vector2& screenSize)
 }
 
 ScreenBuffer::ScreenBuffer(HANDLE console, const Vector2& screenSize)
-	: screenSize(screenSize), buffer(console)
+	: screenSize(screenSize), buffer(console), shouldCloseHandle(false)
 {
 	// 콘솔 창 크기 설정.
 	SMALL_RECT rect{ 0, 0, (short)screenSize.x, (short)screenSize.y };
@@ -73,7 +73,7 @@ ScreenBuffer::ScreenBuffer(HANDLE console, const Vector2& screenSize)
 ScreenBuffer::~ScreenBuffer()
 {
 	// 생성한 핸들 해제.
-	if (buffer)
+	if (shouldCloseHandle && buffer)
 	{
 		CloseHandle(buffer);
 	}

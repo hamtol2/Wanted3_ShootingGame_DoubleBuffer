@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Delegate.h"
+#include "Math/Vector2.h"
 #include <unordered_map>
 #include <Windows.h>
 #include <vector>
@@ -28,6 +29,9 @@ public:
 	bool GetKey(int keyCode);
 	bool GetKeyDown(int keyCode);
 	bool GetKeyUp(int keyCode);
+
+	// 마우스 커서 위치 확인 함수.
+	Vector2 MousePosition() const;
 
 	static Input& Get();
 
@@ -118,6 +122,9 @@ private:
 
 	// 키 입력 정보 관리 변수.
 	KeyState keyStates[256] = { };
+
+	// 마우스 커서 위치.
+	Vector2 mousePosition;
 
 	// 키입력 관련 이벤트.
 	std::unordered_map<int, std::vector<Delegate>> keydownCallbacks;

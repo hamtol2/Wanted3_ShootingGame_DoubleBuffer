@@ -44,6 +44,9 @@ private:
 	// 한 발씩 발사/연사 모드 변경 함수.
 	void ChangeFireMode();
 
+	// @Test: 클릭 이벤트 테스트 함수.
+	void OnClick();
+
 	// 게임 종료 함수.
 	void Quit();
 

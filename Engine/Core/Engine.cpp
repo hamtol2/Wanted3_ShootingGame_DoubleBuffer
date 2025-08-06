@@ -63,7 +63,7 @@ Engine::Engine()
 
 	// 콘솔 창 크기 변경 안되도록 설정.
 	// "관리자 모드에서만 제대로 실행됨"
-	DisableToResizeWindow();
+	//DisableToResizeWindow();
 
 	// cls 호출.
 	system("cls");
@@ -178,6 +178,12 @@ void Engine::WriteToBuffer(
 		// 정상 위치(양수 좌표)에 있는 글자 수 계산.
 		finalLength = length + position.x;
 
+		// @Incomplete: 음수가 나오면 안됨.
+		if (finalLength < 0)
+		{
+			return;
+		}
+
 		// 메모리 할당/초기화.
 		finalImage = new char[finalLength + 1];
 		memset(finalImage, 0, finalLength + 1);
@@ -198,6 +204,12 @@ void Engine::WriteToBuffer(
 	{
 		// 정상 위치(화면 안쪽)에 있는 글자 수 계산.
 		finalLength = settings.width - position.x;
+
+		// @Incomplete: 음수가 나오면 안됨.
+		if (finalLength < 0)
+		{
+			return;
+		}
 
 		// 메모리 할당/초기화.
 		finalImage = new char[finalLength + 1];

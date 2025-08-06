@@ -52,7 +52,7 @@ void GameLevel::Tick(float deltaTime)
 	ProcessCollisionPlayerBulletAndEnemy();
 
 	// 적의 탄약과 플레이어의 충돌 처리.
-	ProcessCollisionPlayerAndEnemyBullet();
+	//ProcessCollisionPlayerAndEnemyBullet();
 }
 
 void GameLevel::SpawnEnemies(float deltaTime)
