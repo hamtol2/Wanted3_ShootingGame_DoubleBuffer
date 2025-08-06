@@ -27,13 +27,8 @@ Input::Input()
 
 void Input::ProcessInput()
 {
+	// 입력 핸들 얻어오기 & 마우스 입력 활성화 설정.
 	static HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
-	//static HANDLE inputHandle = CreateFileW(L"CONIN$", 
-	//	GENERIC_READ | GENERIC_WRITE,
-	//	FILE_SHARE_READ | FILE_SHARE_WRITE,
-	//	NULL, OPEN_EXISTING, 0, NULL
-	//);
-
 	static bool initialized = false;
 	if (!initialized)
 	{
@@ -60,6 +55,7 @@ void Input::ProcessInput()
 	{
 		if (ReadConsoleInput(inputHandle, records, recordCount, &eventReadCount))
 		{
+			// @Test: 읽어온 이벤트 수 확인.
 			//char eventCountAndTypeString[50] = {};
 			//sprintf_s(eventCountAndTypeString, 50, "EventCount: %d \n", eventReadCount);
 			//OutputDebugStringA(eventCountAndTypeString);
@@ -68,17 +64,17 @@ void Input::ProcessInput()
 			{
 				INPUT_RECORD& record = records[ix];
 
-				char eventCountAndTypeString[50] = {};
-				sprintf_s(eventCountAndTypeString, 50, "EventCount: %d | EventType: %s \n",
-					eventReadCount, 
-					record.EventType == WINDOW_BUFFER_SIZE_EVENT ? "BufferSizeEvent" : 
-					record.EventType == KEY_EVENT ? "KeyEvent" : 
-					record.EventType == MOUSE_EVENT ? "MouseEvent" : 
-					record.EventType == FOCUS_EVENT ? "FocusEvent" : 
-					"MenuEvent" 
-				);
-
-				OutputDebugStringA(eventCountAndTypeString);
+				// @Test: 읽어온 이벤트 수와 타입 확인.
+				//char eventCountAndTypeString[50] = {};
+				//sprintf_s(eventCountAndTypeString, 50, "EventCount: %d | EventType: %s \n",
+				//	eventReadCount, 
+				//	record.EventType == WINDOW_BUFFER_SIZE_EVENT ? "BufferSizeEvent" : 
+				//	record.EventType == KEY_EVENT ? "KeyEvent" : 
+				//	record.EventType == MOUSE_EVENT ? "MouseEvent" : 
+				//	record.EventType == FOCUS_EVENT ? "FocusEvent" : 
+				//	"MenuEvent" 
+				//);
+				//OutputDebugStringA(eventCountAndTypeString);
 
 				switch (record.EventType)
 				{
