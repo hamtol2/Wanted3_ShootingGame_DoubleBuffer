@@ -11,18 +11,18 @@ Input::Input()
 	// 싱글톤 실행을 위해 instance 변수 설정.
 	instance = this;
 
-	// 마우스 이벤트 활성화.
-	HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
-	DWORD mode = ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS;
-	mode &= ~ENABLE_QUICK_EDIT_MODE;
-	BOOL result = SetConsoleMode(inputHandle, mode);
-	
-	if (result == FALSE)
-	{
-		int errorCode = GetLastError();
-		OutputDebugStringA("마우스 입력 설정 실패\n");
-		__debugbreak();
-	}
+	//// 마우스 이벤트 활성화.
+	//HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+	//DWORD mode = ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS;
+	//mode &= ~ENABLE_QUICK_EDIT_MODE;
+	//BOOL result = SetConsoleMode(inputHandle, mode);
+	//
+	//if (result == FALSE)
+	//{
+	//	int errorCode = GetLastError();
+	//	OutputDebugStringA("마우스 입력 설정 실패\n");
+	//	__debugbreak();
+	//}
 }
 
 void Input::ProcessInput()
@@ -50,7 +50,7 @@ void Input::ProcessInput()
 	const int recordCount = 256;
 	INPUT_RECORD records[recordCount] = {};
 	DWORD eventReadCount = 0;
-	
+
 	if (PeekConsoleInput(inputHandle, records, recordCount, &eventReadCount) && eventReadCount > 0)
 	{
 		if (ReadConsoleInput(inputHandle, records, recordCount, &eventReadCount))
@@ -94,7 +94,13 @@ void Input::ProcessInput()
 				case MOUSE_EVENT:
 				{
 					mousePosition.x = record.Event.MouseEvent.dwMousePosition.X;
+					mousePosition.x = mousePosition.x < 0 ? 0 
+						: mousePosition.x >= Engine::Get().Width() - 1 ? Engine::Get().Width() - 1 
+						: mousePosition.x;
 					mousePosition.y = record.Event.MouseEvent.dwMousePosition.Y;
+					mousePosition.y = mousePosition.y < 0 ? 0
+						: mousePosition.y >= Engine::Get().Height() - 1 ? Engine::Get().Height() - 1
+						: mousePosition.y;
 
 					keyStates[VK_LBUTTON].isKeyDown
 						= (record.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED) != 0;
