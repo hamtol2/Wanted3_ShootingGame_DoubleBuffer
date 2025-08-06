@@ -52,7 +52,8 @@ Engine::Engine()
 	ClearImageBuffer();
 
 	// 두 개의 버퍼 생성.
-	renderTargets[0] = new ScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE), screenSize);
+	//renderTargets[0] = new ScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE), screenSize);
+	renderTargets[0] = new ScreenBuffer(screenSize);
 	renderTargets[1] = new ScreenBuffer(screenSize);
 
 	// 버퍼 교환.
@@ -63,7 +64,7 @@ Engine::Engine()
 
 	// 콘솔 창 크기 변경 안되도록 설정.
 	// "관리자 모드에서만 제대로 실행됨"
-	//DisableToResizeWindow();
+	DisableToResizeWindow();
 
 	// cls 호출.
 	system("cls");

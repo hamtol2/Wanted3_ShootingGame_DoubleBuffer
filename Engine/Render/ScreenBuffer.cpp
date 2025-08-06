@@ -17,7 +17,7 @@ ScreenBuffer::ScreenBuffer(const Vector2& screenSize)
 	if (buffer == INVALID_HANDLE_VALUE)
 	{
 		//__debugbreak();
-		std::cout << "버퍼 생성 실패\n";
+		std::cerr << "버퍼 생성 실패\n";
 		return;
 	}
 

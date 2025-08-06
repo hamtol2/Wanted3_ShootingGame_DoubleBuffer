@@ -13,10 +13,10 @@ Input::Input()
 
 	// 마우스 이벤트 활성화.
 	HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
-	DWORD mode = ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT | /*ENABLE_PROCESSED_INPUT | */ENABLE_EXTENDED_FLAGS;
+	DWORD mode = ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS;
 	mode &= ~ENABLE_QUICK_EDIT_MODE;
 	BOOL result = SetConsoleMode(inputHandle, mode);
-
+	
 	if (result == FALSE)
 	{
 		int errorCode = GetLastError();
@@ -27,60 +27,87 @@ Input::Input()
 
 void Input::ProcessInput()
 {
-	HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+	static HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+	//static HANDLE inputHandle = CreateFileW(L"CONIN$", 
+	//	GENERIC_READ | GENERIC_WRITE,
+	//	FILE_SHARE_READ | FILE_SHARE_WRITE,
+	//	NULL, OPEN_EXISTING, 0, NULL
+	//);
 
-	INPUT_RECORD record = { };
-	DWORD events = 0;
-
-	if (PeekConsoleInput(inputHandle, &record, 1, &events) && events > 0)
+	static bool initialized = false;
+	if (!initialized)
 	{
-		char eventCountString[50] = {};
-		sprintf_s(eventCountString, 50, "EventCount: %d | eventType: %d \n", events, record.EventType);
-		OutputDebugStringA(eventCountString);
+		// 마우스 이벤트 활성화.
+		DWORD mode = ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS;
+		mode &= ~ENABLE_QUICK_EDIT_MODE;
+		BOOL result = SetConsoleMode(inputHandle, mode);
 
-		if (ReadConsoleInput(inputHandle, &record, 1, &events))
+		if (result == FALSE)
 		{
-			//if (record.EventType == WINDOW_BUFFER_SIZE_EVENT)
-			//{
-			//	continue;
-			//}
+			int errorCode = GetLastError();
+			OutputDebugStringA("마우스 입력 설정 실패\n");
+			__debugbreak();
+		}
 
-			// @Test: 마우스 이벤트 들어오는지 확인.
-			if (record.EventType == MOUSE_EVENT)
-			{
-				char debugMessage[100] = {};
-				sprintf_s(debugMessage, 100, "EventType: %d | Click Status: %d \n",
-					record.EventType, (record.Event.MouseEvent.dwButtonState));
-				OutputDebugStringA(debugMessage);
-			}
+		initialized = true;
+	}
 
-			switch (record.EventType)
+	const int recordCount = 256;
+	INPUT_RECORD records[recordCount] = {};
+	DWORD eventReadCount = 0;
+	
+	if (PeekConsoleInput(inputHandle, records, recordCount, &eventReadCount) && eventReadCount > 0)
+	{
+		if (ReadConsoleInput(inputHandle, records, recordCount, &eventReadCount))
+		{
+			//char eventCountAndTypeString[50] = {};
+			//sprintf_s(eventCountAndTypeString, 50, "EventCount: %d \n", eventReadCount);
+			//OutputDebugStringA(eventCountAndTypeString);
+
+			for (int ix = 0; ix < (int)eventReadCount; ++ix)
 			{
-			case KEY_EVENT:
-			{
-				if (record.Event.KeyEvent.bKeyDown)
+				INPUT_RECORD& record = records[ix];
+
+				char eventCountAndTypeString[50] = {};
+				sprintf_s(eventCountAndTypeString, 50, "EventCount: %d | EventType: %s \n",
+					eventReadCount, 
+					record.EventType == WINDOW_BUFFER_SIZE_EVENT ? "BufferSizeEvent" : 
+					record.EventType == KEY_EVENT ? "KeyEvent" : 
+					record.EventType == MOUSE_EVENT ? "MouseEvent" : 
+					record.EventType == FOCUS_EVENT ? "FocusEvent" : 
+					"MenuEvent" 
+				);
+
+				OutputDebugStringA(eventCountAndTypeString);
+
+				switch (record.EventType)
 				{
-					keyStates[record.Event.KeyEvent.wVirtualKeyCode].isKeyDown = true;
-				}
-				else
+				case KEY_EVENT:
 				{
-					keyStates[record.Event.KeyEvent.wVirtualKeyCode].isKeyDown = false;
+					if (record.Event.KeyEvent.bKeyDown)
+					{
+						keyStates[record.Event.KeyEvent.wVirtualKeyCode].isKeyDown = true;
+					}
+					else
+					{
+						keyStates[record.Event.KeyEvent.wVirtualKeyCode].isKeyDown = false;
+					}
 				}
-			}
-			break;
+				break;
 
-			case MOUSE_EVENT:
-			{
-				mousePosition.x = record.Event.MouseEvent.dwMousePosition.X;
-				mousePosition.y = record.Event.MouseEvent.dwMousePosition.Y;
+				case MOUSE_EVENT:
+				{
+					mousePosition.x = record.Event.MouseEvent.dwMousePosition.X;
+					mousePosition.y = record.Event.MouseEvent.dwMousePosition.Y;
 
-				keyStates[VK_LBUTTON].isKeyDown
-					= (record.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED) != 0;
+					keyStates[VK_LBUTTON].isKeyDown
+						= (record.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED) != 0;
 
-				keyStates[VK_RBUTTON].isKeyDown
-					= (record.Event.MouseEvent.dwButtonState & RIGHTMOST_BUTTON_PRESSED) != 0;
-			}
-			break;
+					keyStates[VK_RBUTTON].isKeyDown
+						= (record.Event.MouseEvent.dwButtonState & RIGHTMOST_BUTTON_PRESSED) != 0;
+				}
+				break;
+				}
 			}
 		}
 	}
@@ -88,6 +115,7 @@ void Input::ProcessInput()
 	//// 키 입력 테스트.
 	//for (int ix = 0; ix < 255; ++ix)
 	//{
+	//	// 키 입력 확인.
 	//	keyStates[ix].isKeyDown = (GetAsyncKeyState(ix) & 0x8000) ? true : false;
 	//}
 }
