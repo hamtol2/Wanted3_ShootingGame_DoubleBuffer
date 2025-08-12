@@ -71,6 +71,9 @@ public:
 	// 레벨 추가 함수.
 	void AddLevel(Level* newLevel);
 
+	// 레벨 전환 함수.
+	void ChangeLevel(Level* newLevel);
+
 	// 메모리 해제 함수.
 	virtual void CleanUp();
 
@@ -119,6 +122,9 @@ protected:
 
 	// 메인 레벨.
 	Level* mainLevel = nullptr;
+
+	// 전환할 레벨을 임시 저장하는 변수.
+	Level* nextLevel = nullptr;
 
 	// 입력 관리자.
 	Input input;

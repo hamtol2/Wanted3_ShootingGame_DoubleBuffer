@@ -138,16 +138,24 @@ void Engine::Run()
 				mainLevel->ProcessAddAndDestroyActors();
 			}
 
-			// @Test.
-			CONSOLE_SCREEN_BUFFER_INFO info = {};
-			auto result = GetConsoleScreenBufferInfo(GetRenderer()->buffer, &info);
-			if (result)
+			// 레벨 전환 처리.
+			if (nextLevel)
 			{
-				char title[100] = {};
-				sprintf_s(title, 100, "dwSize: (%d, %d)", 
-					info.dwSize.X, info.dwSize.Y);
-				SetConsoleTitleA(title);
+				SafeDelete(mainLevel);
+				mainLevel = nextLevel;
+				nextLevel = nullptr;
 			}
+
+			// @Test.
+			//CONSOLE_SCREEN_BUFFER_INFO info = {};
+			//auto result = GetConsoleScreenBufferInfo(GetRenderer()->buffer, &info);
+			//if (result)
+			//{
+			//	char title[100] = {};
+			//	sprintf_s(title, 100, "dwSize: (%d, %d)", 
+			//		info.dwSize.X, info.dwSize.Y);
+			//	SetConsoleTitleA(title);
+			//}
 		}
 	}
 
@@ -273,6 +281,11 @@ void Engine::AddLevel(Level* newLevel)
 	}
 
 	mainLevel = newLevel;
+}
+
+void Engine::ChangeLevel(Level* newLevel)
+{
+	this->nextLevel = newLevel;
 }
 
 void Engine::CleanUp()
